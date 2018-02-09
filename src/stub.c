@@ -279,6 +279,9 @@ BOOL OpCreateInstDirectory(LPVOID* p)
 
 int CALLBACK _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+   freopen("C:\ocra.log", "w", stdout);
+   freopen("C:\ocra.log", "w", stderr);
+
    DeleteOldFiles();
 
    /* Find name of image */
