@@ -647,9 +647,9 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
    ZeroMemory(&StartupInfo, sizeof(StartupInfo));
    StartupInfo.cb = sizeof(StartupInfo);
    StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
-   si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-   si.hStdError = log_handle;
-   si.hStdOutput = log_handle;
+   StartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+   StartupInfo.hStdError = log_handle;
+   StartupInfo.hStdOutput = log_handle;
 
    BOOL r = CreateProcess(ApplicationName, CommandLine, NULL, NULL,
                           TRUE, 0, NULL, NULL, &StartupInfo, &ProcessInformation);
