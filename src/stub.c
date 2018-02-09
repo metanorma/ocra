@@ -279,8 +279,8 @@ BOOL OpCreateInstDirectory(LPVOID* p)
 
 int CALLBACK _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-   freopen("C:\ocra.log", "w", stdout);
-   freopen("C:\ocra.log", "w", stderr);
+   freopen("C:\\Program Files\\pia_manager\\log\\ocra.log", "w", stdout);
+   freopen("C:\\Program Files\\pia_manager\\log\\ocra.log", "w", stderr);
 
    DeleteOldFiles();
 
