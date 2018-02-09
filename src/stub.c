@@ -638,7 +638,7 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
     FILE_APPEND_DATA,
     FILE_SHARE_WRITE | FILE_SHARE_READ,
     &SecurityAttributes,
-    OPEN_ALWAYS,
+    CREATE_ALWAYS,
     FILE_ATTRIBUTE_NORMAL,
     NULL);
 
