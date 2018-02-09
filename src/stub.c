@@ -629,10 +629,28 @@ BOOL OpCreateProcess(LPVOID* p)
 
 void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
 {
+  SECURITY_ATTRIBUTES SecurityAttributes;
+  SecurityAttributes.nLength = sizeof(SecurityAttributes);
+  SecurityAttributes.lpSecurityDescriptor = NULL;
+  SecurityAttributes.bInheritHandle = TRUE;
+
+  HANDLE log_handle = CreateFile(_T("C:/Program Files/pia_manager/ocra_child.log"),
+    FILE_APPEND_DATA,
+    FILE_SHARE_WRITE | FILE_SHARE_READ,
+    &SecurityAttributes,
+    OPEN_ALWAYS,
+    FILE_ATTRIBUTE_NORMAL,
+    NULL);
+
    PROCESS_INFORMATION ProcessInformation;
    STARTUPINFO StartupInfo;
    ZeroMemory(&StartupInfo, sizeof(StartupInfo));
    StartupInfo.cb = sizeof(StartupInfo);
+   StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
+   si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+   si.hStdError = log_handle;
+   si.hStdOutput = log_handle;
+
    BOOL r = CreateProcess(ApplicationName, CommandLine, NULL, NULL,
                           TRUE, 0, NULL, NULL, &StartupInfo, &ProcessInformation);
 
@@ -651,6 +669,7 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
 
    CloseHandle(ProcessInformation.hProcess);
    CloseHandle(ProcessInformation.hThread);
+   CloseHandle(log_handle);
 }
 
 /**
