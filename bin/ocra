@@ -957,7 +957,7 @@ EOF
       installed_ruby_exe = TEMPDIR_ROOT / BINDIR / rubyexe
       launch_script = (TEMPDIR_ROOT / target_script).to_native
       sb.postcreateprocess(installed_ruby_exe,
-        "#{rubyexe} \"#{launch_script}\"#{extra_arg}")
+        "#{rubyexe} -E\"utf-8\" \"#{launch_script}\"#{extra_arg}")
     end
 
     unless Ocra.inno_script
