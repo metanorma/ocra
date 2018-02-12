@@ -279,9 +279,6 @@ BOOL OpCreateInstDirectory(LPVOID* p)
 
 int CALLBACK _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-   freopen("C:\\Program Files\\pia_manager\\ocra.log", "w", stdout);
-   freopen("C:\\Program Files\\pia_manager\\ocra.log", "w", stderr);
-
    DeleteOldFiles();
 
    /* Find name of image */
@@ -634,11 +631,13 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
   SecurityAttributes.lpSecurityDescriptor = NULL;
   SecurityAttributes.bInheritHandle = TRUE;
 
-  HANDLE log_handle = CreateFile(_T("C:/Program Files/pia_manager/ocra_child.log"),
+  CreateDirectory(_T("C:/Program Files/pia_manager/log"), NULL);
+
+  HANDLE log_handle = CreateFile(_T("C:/Program Files/pia_manager/log/pia_manager.log"),
     FILE_APPEND_DATA,
     FILE_SHARE_WRITE | FILE_SHARE_READ,
     &SecurityAttributes,
-    CREATE_ALWAYS,
+    CREATE_NEW,
     FILE_ATTRIBUTE_NORMAL,
     NULL);
 
