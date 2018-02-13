@@ -631,9 +631,24 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
   SecurityAttributes.lpSecurityDescriptor = NULL;
   SecurityAttributes.bInheritHandle = TRUE;
 
-  CreateDirectory(_T("C:/Program Files/pia_manager/log"), NULL);
+  wchar_t *system_drive = _wgetenv(L"SystemDrive");
 
-  HANDLE log_handle = CreateFile(_T("C:/Program Files/pia_manager/log/pia_manager.log"),
+  if (system_drive == NULL) {
+    system_drive = L"C:";
+  }
+
+  wchar_t *log_dir  = L"/Program Files/pia_manager/log";
+  wchar_t *log_path = L"/Program Files/pia_manager/log/pia_manager.log";
+
+  wchar_t *absolute_log_dir  = malloc((sizeof(wchar_t) * (wcslen(system_drive) + wcslen(log_dir))) + 1);
+  wchar_t *absolute_log_path = malloc((sizeof(wchar_t) * (wcslen(system_drive) + wcslen(log_path))) + 1);
+
+  swprintf(&absolute_log_dir,  "%s%s", system_drive, log_dir);
+  swprintf(&absolute_log_path, "%s%s", system_drive, log_path);
+
+  CreateDirectory(_T(absolute_log_dir), NULL);
+
+  HANDLE log_handle = CreateFile(_T(absolute_log_path),
     FILE_APPEND_DATA,
     FILE_SHARE_WRITE | FILE_SHARE_READ,
     &SecurityAttributes,
@@ -669,6 +684,9 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
    CloseHandle(ProcessInformation.hProcess);
    CloseHandle(ProcessInformation.hThread);
    CloseHandle(log_handle);
+
+   free(absolute_log_dir);
+   free(absolute_log_path);
 }
 
 /**
