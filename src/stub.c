@@ -643,8 +643,8 @@ void CreateAndWaitForProcess(LPTSTR ApplicationName, LPTSTR CommandLine)
   wchar_t *absolute_log_dir  = malloc((sizeof(wchar_t) * (wcslen(system_drive) + wcslen(log_dir))) + 1);
   wchar_t *absolute_log_path = malloc((sizeof(wchar_t) * (wcslen(system_drive) + wcslen(log_path))) + 1);
 
-  swprintf(&absolute_log_dir,  "%s%s", system_drive, log_dir);
-  swprintf(&absolute_log_path, "%s%s", system_drive, log_path);
+  swprintf(absolute_log_dir,  L"%s%s", system_drive, log_dir);
+  swprintf(absolute_log_path, L"%s%s", system_drive, log_path);
 
   CreateDirectory(_T(absolute_log_dir), NULL);
 
