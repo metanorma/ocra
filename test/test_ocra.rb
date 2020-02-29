@@ -4,6 +4,7 @@ require "tmpdir"
 require "fileutils"
 require "rbconfig"
 require "pathname"
+require File.join(File.dirname(__FILE__), "fake_code_signer")
 
 begin
   require "rubygems"
