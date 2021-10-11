@@ -164,6 +164,7 @@ class TestOcra < MiniTest::Test
   # With --no-dep-run, ocra should not run script during build
   def test_nodeprun
     with_fixture 'writefile' do
+      File.delete(p"output.txt") if File.exist?("output.txt")
       assert system("ruby", ocra, "writefile.rb", *(DefaultArgs + ["--no-dep-run"]))
       assert !File.exist?("output.txt")
       pristine_env "writefile.exe" do
