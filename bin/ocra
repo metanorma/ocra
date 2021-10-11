@@ -1018,6 +1018,7 @@ EOF
       handles.select { |handle| handle > 0 }.map do |handle|
         str = "\x00\x00" * 256
         modulefilename_length = getmodulefilename.call(handle, str, str.size)
+        Ocra.fatal_error "LibraryDetector: GetModuleFileNameW failed" unless modulefilename_length > 0
         modulefilename = str[0, modulefilename_length * 2].force_encoding("UTF-16LE").encode("UTF-8")
         Ocra.Pathname(modulefilename)
       end
