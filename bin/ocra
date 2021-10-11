@@ -988,10 +988,18 @@ EOF
         extend Fiddle::Importer
         dlload "kernel32.dll"
         include Fiddle::Win32Types
-        typealias "HMODULE", "uintptr_t"
+
+# https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+# typedef PVOID HANDLE
+# typedef HINSTANCE HMODULE;
+
+        typealias "HMODULE", "voidp"
+        typealias "HANDLE", "voidp"
         typealias "LPWSTR", "char*"
+
         extern "DWORD GetModuleFileNameW(HMODULE, LPWSTR, DWORD)"
         extern "HANDLE GetCurrentProcess(void)"
+        extern "DWORD GetLastError(void)"
       }
     end
 
@@ -1004,18 +1012,27 @@ EOF
       getmodulefilename = Fiddle::Function.new(kernel32["GetModuleFileNameW"], [Fiddle::TYPE_UINTPTR_T, Fiddle::TYPE_VOIDP, Fiddle::TYPE_LONG], Fiddle::TYPE_LONG)
       getlasterror = Fiddle::Function.new(kernel32["GetLastError"], [], Fiddle::TYPE_LONG)
 
-      bytes_needed = 4 * 32
+# Different packing/unpacking for 64/32 bits systems      
+      if Fiddle::SIZEOF_VOIDP == 8 then
+        f_single = "Q"
+        f_array  = "Q*"
+      else
+        f_single = "I"
+        f_array = "I*"
+      end
+
+      bytes_needed = Fiddle::SIZEOF_VOIDP * 32
       module_handle_buffer = nil
       process_handle = getcurrentprocess.call()
       loop do
         module_handle_buffer = "\x00" * bytes_needed
-        bytes_needed_buffer = [0].pack("I")
+        bytes_needed_buffer = [0].pack(f_single)
         r = enumprocessmodules.call(process_handle, module_handle_buffer, module_handle_buffer.size, bytes_needed_buffer)
-        bytes_needed = bytes_needed_buffer.unpack("I")[0]
+        bytes_needed = bytes_needed_buffer.unpack(f_single)[0]
         break if bytes_needed <= module_handle_buffer.size
       end
 
-      handles = module_handle_buffer.unpack("Q*")
+      handles = module_handle_buffer.unpack(f_array)
       handles.select { |handle| handle > 0 }.map do |handle|
         str = "\x00\x00" * 256
         modulefilename_length = getmodulefilename.call(handle, str, str.size)
