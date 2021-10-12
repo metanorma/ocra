@@ -625,7 +625,18 @@ EOF
       gem_files = []
 
       gems.each do |gemname, spec|
-        @gemspecs << Pathname(spec.spec_file) if File.exist?(spec.spec_file)
+        if File.exist?(spec.spec_file) then
+          @gemspecs << Pathname(spec.spec_file)
+        else
+          spec_name = File.basename(spec.spec_file)
+          spec_path = File.dirname(spec.spec_file)
+          default_spec_file = spec_path + "/default/" + spec_name
+          if File.exist?(default_spec_file) then
+            @gemspecs << Pathname(default_spec_file)
+            Ocra.msg "Using default specification #{default_spec_file} for gem #{spec.full_name} Inshalla !"
+          end 
+        end
+#        @gemspecs << Pathname(spec.spec_file) if File.exist?(spec.spec_file)
 
         # Determine which set of files to include for this particular gem
         include = [:loaded, :files]
@@ -961,6 +972,7 @@ EOF
       # Set environment variable
       sb.setenv("RUBYOPT", ENV["RUBYOPT"] || "")
       sb.setenv("RUBYLIB", load_path.map { |path| path.to_native }.uniq.join(";"))
+
       sb.setenv("GEM_PATH", (TEMPDIR_ROOT / GEMHOMEDIR).to_native)
 
       # Add the opcode to launch the script
